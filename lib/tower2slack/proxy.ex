@@ -1,4 +1,4 @@
-defmodule Tower2slack do
+defmodule Tower2slack.Proxy do
 
   @moduledoc """
   转发 Tower.im 的 webhook 数据到 Slack
@@ -10,17 +10,8 @@ defmodule Tower2slack do
     channel:  "#test"
   }
 
-  @doc """
-  将 payload 发到 Slack。会加上默认设置。
-  """
-  def deliver(payload, url) do
-    %{body: "ok", status_code: 200} = HTTPoison.post!(
-      url,
-      Poison.encode!(Map.merge(@defaults, payload)),
-      [{:"content-type", "application/json"}]
-    )
-
-    :ok
+  def forward(data, event_type, url) do
+    transform_tower(data, event_type) |> deliver(url)
   end
 
   @doc """
@@ -30,7 +21,7 @@ defmodule Tower2slack do
 
   ## Exmaple:
   
-  iex> Tower2slack.transform_tower(%{
+  iex> Tower2slack.Proxy.transform_tower(%{
   ...>  "action" => "created",
   ...>  "data" => %{
   ...>    "project" => %{
@@ -155,6 +146,19 @@ defmodule Tower2slack do
       "documents" -> "#{base}docs/#{subjetc_guid}/"
       _           -> "#{base}#{type}/#{subjetc_guid}/"
     end
+  end
+
+  @doc """
+  将 payload 发到 Slack。会加上默认设置。
+  """
+  def deliver(payload, url) do
+    %{body: "ok", status_code: 200} = HTTPoison.post!(
+      url,
+      Poison.encode!(Map.merge(@defaults, payload)),
+      [{:"content-type", "application/json"}]
+    )
+
+    :ok
   end
 
 end

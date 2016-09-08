@@ -29,7 +29,9 @@ defmodule Tower2slack.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.9.0"},
-      {:poison, "~> 2.2.0"}
+      {:poison, "~> 2.2.0"},
+      {:plug, "~> 1.2.0"},
+      {:cowboy, "~> 1.0.0"}
     ]
   end
 end
