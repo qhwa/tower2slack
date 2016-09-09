@@ -156,16 +156,28 @@ defmodule Tower2slack.Proxy do
   def deliver(payload, url) do
     Logger.debug fn -> "delivering payload #{inspect payload} to #{url}" end
 
-    %{body: "ok", status_code: 200} = HTTPoison.post!(
-      url,
-      Poison.encode!(Map.merge(@defaults, payload)),
-      [{:"content-type", "application/json"}],
-      recv_timeout: 10000, timeout:  20000
-    )
+    Map.merge(@defaults, payload) |> Poison.encode! |> post(url)
 
     Logger.info fn -> "successful!" end
 
     :ok
+  end
+
+  defp post(body, url) do
+    headers = [
+      {:"content-type", "application/json"}
+    ] 
+    opts = Application.fetch_env!(:tower2slack, :deliver_opts) ++ [
+    ]
+
+    Logger.debug fn -> "http opts: #{inspect opts}" end
+
+    %{body: "ok", status_code: 200} = HTTPoison.post!(
+      url,
+      body,
+      headers,
+      opts
+    )
   end
 
 end
