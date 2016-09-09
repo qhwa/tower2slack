@@ -10,3 +10,8 @@ mix run --no-halt
 ```
 
 将 Slack hook 地址 `https://hook.slack.com/...` 替换成 `http://YOUR_HOST:14326/...`
+
+
+## 鸣谢
+
+这个项目参考了 [@lepture](https://github.com/lepture/) 写的 [python 版本](https://github.com/lepture/tower-slack).
