@@ -25,6 +25,8 @@ defmodule Tower2slack.Server do
         slack_url      = Enum.join([@slack_host, "services" | parts], "/")
         {:ok, body, _} = conn |> read_body
 
+        Logger.debug fn -> body end
+
         channel = tower_header(conn, "signature") || "#general"
 
         payload = body
