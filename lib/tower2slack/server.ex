@@ -2,8 +2,14 @@ defmodule Tower2slack.Server do
 
   require Logger
   import Plug.Conn
+  import Tower2slack.Proxy, only: [transform_tower: 2, deliver: 2]
 
   @slack_host "https://hooks.slack.com"
+
+  @defaults %{
+    icon_url: "https://tower.im/assets/mobile/icon/icon@512-84fa5f6ced2a1bd53a409013f739b7ba.png"
+  }
+
 
   def init(opts) do
     opts
@@ -19,16 +25,15 @@ defmodule Tower2slack.Server do
         slack_url      = Enum.join([@slack_host, "services" | parts], "/")
         {:ok, body, _} = conn |> read_body
 
-        channel = tower_header(conn, "signature")
-        target = case channel do
-          "#" <> _ -> [channel: channel]
-          "@" <> _ -> [channel: channel]
-          _ -> nil
-        end
+        channel = tower_header(conn, "signature") || "#general"
 
-        body
+        payload = body
           |> Poison.decode!
-          |> Tower2slack.Proxy.forward(tower_header(conn, "event"), slack_url, target)
+          |> transform_tower(tower_header(conn, "event"))
+
+        Map.merge(@defaults, payload)
+          |> Map.put(:channel, channel)
+          |> deliver(slack_url)
 
         conn |> send_resp(200, "ok")
       _ ->
