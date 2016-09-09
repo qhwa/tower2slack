@@ -14,7 +14,7 @@ defmodule Tower2slack.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison, :poison], mod: {Tower2slack, []}]
+    [applications: [:logger, :httpoison, :poison, :edeliver], mod: {Tower2slack, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -31,7 +31,8 @@ defmodule Tower2slack.Mixfile do
       {:httpoison, "~> 0.9.0"},
       {:poison, "~> 2.2.0"},
       {:plug, "~> 1.2.0"},
-      {:cowboy, "~> 1.0.0"}
+      {:cowboy, "~> 1.0.0"},
+      {:edeliver, "~> 1.3.0"}
     ]
   end
 end
