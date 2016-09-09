@@ -81,7 +81,7 @@ defmodule Tower2slack.Proxy do
       comment ->
         content = Map.get(comment, "content", "")
         lines = content |> String.strip |> String.split("\r\n")
-        "#{text}\n> #{lines[0]} ..."
+        "#{text}\n> #{List.first(lines)} ..."
     end
 
     attachment = attachment
