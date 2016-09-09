@@ -1,24 +1,12 @@
 # Tower2slack
 
-**TODO: Add description**
+这个项目用来提供 hook 服务，将 [Tower](https://tower.im) 的 hook 数据转发到 [Slack](https://slack.com).
 
-## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+## 使用
 
-  1. Add `tower2slack` to your list of dependencies in `mix.exs`:
+```console
+mix run --no-halt
+```
 
-    ```elixir
-    def deps do
-      [{:tower2slack, "~> 0.1.0"}]
-    end
-    ```
-
-  2. Ensure `tower2slack` is started before your application:
-
-    ```elixir
-    def application do
-      [applications: [:tower2slack]]
-    end
-    ```
-
+将 Slack hook 地址 `https://hook.slack.com/...` 替换成 `http://YOUR_HOST:14326/...`
