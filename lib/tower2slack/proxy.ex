@@ -1,5 +1,7 @@
 defmodule Tower2slack.Proxy do
 
+  require Logger
+
   @moduledoc """
   转发 Tower.im 的 webhook 数据到 Slack
   @see https://api.slack.com/incoming-webhooks
@@ -152,11 +154,16 @@ defmodule Tower2slack.Proxy do
   将 payload 发到 Slack。会加上默认设置。
   """
   def deliver(payload, url) do
+    Logger.debug fn -> "delivering payload #{inspect payload} to #{url}" end
+
     %{body: "ok", status_code: 200} = HTTPoison.post!(
       url,
       Poison.encode!(Map.merge(@defaults, payload)),
-      [{:"content-type", "application/json"}]
+      [{:"content-type", "application/json"}],
+      recv_timeout: 10000, timeout:  20000
     )
+
+    Logger.info fn -> "successful!" end
 
     :ok
   end

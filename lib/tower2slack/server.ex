@@ -1,5 +1,6 @@
 defmodule Tower2slack.Server do
 
+  require Logger
   import Plug.Conn
 
   @slack_host "https://hooks.slack.com"
@@ -9,6 +10,10 @@ defmodule Tower2slack.Server do
   end
 
   def call(conn, _opts) do
+
+    Logger.info  fn -> "[#{conn.method}] #{conn.request_path}" end
+    Logger.debug fn -> "receive connection: #{inspect conn}" end
+
     case conn.path_info do
       ["services" | parts] ->
         evt_type       = conn |> get_req_header("x-tower-event") |> List.first
