@@ -16,17 +16,28 @@ defmodule Tower2slack.Server do
 
     case conn.path_info do
       ["services" | parts] ->
-        evt_type       = conn |> get_req_header("x-tower-event") |> List.first
         slack_url      = Enum.join([@slack_host, "services" | parts], "/")
         {:ok, body, _} = conn |> read_body
+
+        channel = tower_header(conn, "signature")
+        target = case channel do
+          "#" <> _ -> [channel: channel]
+          "@" <> _ -> [channel: channel]
+          _ -> nil
+        end
+
         body
           |> Poison.decode!
-          |> Tower2slack.Proxy.forward(evt_type, slack_url)
+          |> Tower2slack.Proxy.forward(tower_header(conn, "event"), slack_url, target)
 
         conn |> send_resp(200, "ok")
       _ ->
         conn |> send_resp(200, "^^")
     end
+  end
+
+  defp tower_header(conn, name) do
+    conn |> get_req_header("x-tower-#{name}") |> List.first
   end
   
 end

@@ -9,11 +9,11 @@ defmodule Tower2slack.Proxy do
 
   @defaults %{
     icon_url: "https://tower.im/assets/mobile/icon/icon@512-84fa5f6ced2a1bd53a409013f739b7ba.png",
-    channel:  "#test"
+    channel:  "#general"
   }
 
-  def forward(data, event_type, url) do
-    transform_tower(data, event_type) |> deliver(url)
+  def forward(data, event_type, url, opts \\ []) do
+    transform_tower(data, event_type, opts) |> deliver(url)
   end
 
   @doc """
@@ -52,7 +52,7 @@ defmodule Tower2slack.Proxy do
   {"action":"archived","data":{"project":{"guid":"8326a5e69712479184f53cea924f8a74","name":"熟悉Tower"},"topic":{"guid":"fe5ca04772754f7182d50d4e8f8af17c","title":"欢迎来到 Tower","updated_at":"2016-09-08T12:46:54Z","handler":{"guid":"7544ba908d2a4108a0df79d65c9061d4","nickname":"五柳"}}}}
   """
    
-  def transform_tower(msg, event) do
+  def transform_tower(msg, event, opts \\ []) do
     %{"action" => action, "data" => data} = msg
     %{"project" => %{
         "guid"  => project_guid,
@@ -80,7 +80,7 @@ defmodule Tower2slack.Proxy do
     text = case action do
       "assigned" ->
         %{"assignee" => %{ "nickname" => nickname }} = subject
-        "#{text} 给 *#{nickname}%"
+        "#{text} 给 *#{nickname}*"
 
       _ -> text
     end
@@ -98,6 +98,7 @@ defmodule Tower2slack.Proxy do
       |> Map.put("mrkdwn_in", ["text"])
 
     %{attachments: [attachment]}
+      |> Map.merge(Enum.into(opts || [], %{}))
   end
 
   defp subject_key(type) do
@@ -133,7 +134,7 @@ defmodule Tower2slack.Proxy do
     end
   end
 
-  defp get_color(action) do
+  defp get_color(_action) do
     "good"
   end
 
@@ -167,8 +168,8 @@ defmodule Tower2slack.Proxy do
     headers = [
       {:"content-type", "application/json"}
     ] 
-    opts = Application.fetch_env!(:tower2slack, :deliver_opts) ++ [
-    ]
+
+    opts = Application.fetch_env!(:tower2slack, :deliver_opts) ++ []
 
     Logger.debug fn -> "http opts: #{inspect opts}" end
 
