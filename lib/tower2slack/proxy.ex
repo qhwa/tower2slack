@@ -80,8 +80,10 @@ defmodule Tower2slack.Proxy do
       nil -> text
       comment ->
         content = Map.get(comment, "content", "")
-        lines = content |> String.strip |> String.split("\r\n")
-        "#{text}\n> #{List.first(lines)} ..."
+        lines   = content |> String.strip |> String.split("\r\n")
+        suffix  = if length(lines) <= 1, do: "", else: " ..."
+
+        text <> "\n> " <> List.first(lines) <> suffix
     end
 
     attachment = attachment
