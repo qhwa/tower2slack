@@ -86,7 +86,7 @@ defmodule Tower2slack.Proxy do
     text = case Map.get(data, "comment") do
       nil -> text
       comment ->
-        content = comment.content
+        content = Map.get(comment, "content", "")
         lines = content |> String.strip |> String.split("\r\n")
         "#{text}\n> #{lines[0]} ..."
     end
