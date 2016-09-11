@@ -43,8 +43,7 @@ defmodule Tower2slack.Proxy do
   {"action":"archived","data":{"project":{"guid":"8326a5e69712479184f53cea924f8a74","name":"熟悉Tower"},"topic":{"guid":"fe5ca04772754f7182d50d4e8f8af17c","title":"欢迎来到 Tower","updated_at":"2016-09-08T12:46:54Z","handler":{"guid":"7544ba908d2a4108a0df79d65c9061d4","nickname":"五柳"}}}}
   """
    
-  def transform_tower(msg, event) do
-    %{"action" => action, "data" => data} = msg
+  def transform_tower(%{"action" => action, "data" => data}, event) do
     %{"project" => %{
         "guid"  => project_guid,
         "name"  => project_name
