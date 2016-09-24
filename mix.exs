@@ -37,7 +37,8 @@ defmodule Tower2slack.Mixfile do
       {:poison, "~> 2.2.0"},
       {:plug, "~> 1.2.0"},
       {:cowboy, "~> 1.0.0"},
-      {:edeliver, "~> 1.3.0"}
+      {:edeliver, "~> 1.3.0"},
+      {:credo, "~> 0.4", only: [:dev, :test]}
     ]
   end
 end

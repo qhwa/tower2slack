@@ -1,5 +1,12 @@
 defmodule Tower2slack.Server do
 
+  @moduledoc """
+  提供一个 HTTP 服务，将收到的数据交给核心处理。
+  并将转换后的数据发送的对应的 Slack hook 地址。
+  Slack hook 地址是根据当前 url 推算出来的，只是
+  替换了当前的域名.
+  """
+
   require Logger
   import Plug.Conn
   import Tower2slack.Proxy, only: [transform_tower: 2, deliver: 2]
@@ -33,7 +40,8 @@ defmodule Tower2slack.Server do
           |> Poison.decode!
           |> transform_tower(tower_header(conn, "event"))
 
-        Map.merge(@defaults, payload)
+        @defaults
+          |> Map.merge(payload)
           |> Map.put(:channel, channel)
           |> deliver(slack_url)
 

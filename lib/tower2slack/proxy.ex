@@ -88,7 +88,7 @@ defmodule Tower2slack.Proxy do
   end
 
   defp get_assignee(data) do
-    %{"assignee" => %{ "nickname" => nickname }} = data
+    %{"assignee" => %{"nickname" => nickname}} = data
     {nickname}
   end
 
@@ -98,31 +98,32 @@ defmodule Tower2slack.Proxy do
     end
   end
 
+  @captions %{
+    "created"          => "创建了",
+    "updated"          => "更新了",
+    "deleted"          => "删除了",
+    "commented"        => "评论了",
+    "archived"         => "归档了",
+    "unarchived"       => "激活了",
+    "started"          => "开始处理",
+    "paused"           => "暂停处理",
+    "reopen"           => "重新打开了",
+    "completed"        => "完成了",
+    "deadline_changed" => "更新截止时间",
+    "sticked"          => "置顶了",
+    "unsticked"        => "取消置顶",
+    "recovered"        => "恢复了",
+    "assigned"         => "指派",
+    "unassigned"       => "取消指派",
+    "documents"        => "文档",
+    "topics"           => "讨论",
+    "todos"            => "任务",
+    "todolists"        => "任务清单",
+    "attachments"      => "文件"
+  }
+
   defp caption(action) do
-    case action do
-      "created"          -> "创建了"
-      "updated"          -> "更新了"
-      "deleted"          -> "删除了"
-      "commented"        -> "评论了"
-      "archived"         -> "归档了"
-      "unarchived"       -> "激活了"
-      "started"          -> "开始处理"
-      "paused"           -> "暂停处理"
-      "reopen"           -> "重新打开了"
-      "completed"        -> "完成了"
-      "deadline_changed" -> "更新截止时间"
-      "sticked"          -> "置顶了"
-      "unsticked"        -> "取消置顶"
-      "recovered"        -> "恢复了"
-      "assigned"         -> "指派"
-      "unassigned"       -> "取消指派"
-      "documents"        -> "文档"
-      "topics"           -> "讨论"
-      "todos"            -> "任务"
-      "todolists"        -> "任务清单"
-      "attachments"      -> "文件"
-      _                  -> action
-    end
+    Map.get(@captions, action) || action
   end
 
   defp get_color(_action) do
