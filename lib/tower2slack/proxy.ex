@@ -44,52 +44,53 @@ defmodule Tower2slack.Proxy do
   """
    
   def transform_tower(%{"action" => action, "data" => data}, event) do
-    %{"project" => %{
-        "guid"  => project_guid,
-        "name"  => project_name
-      },
-    } = data
+    {project_guid, project_name} = get_project(data)
+    {subject_guid, subject_title, author} = get_subject(Map.get(data, subject_key(event)))
 
-    subject = Map.get(data, subject_key(event))
-    %{"guid" => subject_guid, "title" => subject_title} = subject
-
-    attachment  = %{"color" => get_color(action)}
     subject_url = get_subject_url(project_guid, event, subject_guid)
 
-    author     = Map.get(subject, "handler")
-    attachment = case author do
-      nil -> attachment
-      _   -> Map.merge(attachment, %{
-        "author_name" => Map.get(author, "nickname"),
-        "author_link" => "https://tower.im/members/#{Map.get(author, "guid")}/"
-      })
-    end
-
     text = "在项目《<#{project_url(project_guid)}|#{project_name}>》中#{caption(action)} #{caption(event)} <#{subject_url}|#{subject_title}>"
+      |> add_assign_text(action, data)
+      |> add_comment_text(data)
 
-    text = case action do
-      "assigned" ->
-        %{"assignee" => %{ "nickname" => nickname }} = subject
-        "#{text} 给 *#{nickname}*"
-
-      _ -> text
-    end
-
-    text = case Map.get(data, "comment") do
-      nil -> text
-      comment ->
-        content = Map.get(comment, "content", "")
-        lines   = content |> String.strip |> String.split("\r\n")
-        suffix  = if length(lines) <= 1, do: "", else: " ..."
-
-        text <> "\n> " <> List.first(lines) <> suffix
-    end
-
-    attachment = attachment
+    attachment  = %{"color" => get_color(action)}
+      |> add_author_info(author)
       |> Map.put("text", text)
       |> Map.put("mrkdwn_in", ["text"])
 
     %{attachments: [attachment]}
+  end
+
+  def add_author_info(attachment, author) do
+    %{"nickname" => nickname, "guid" => guid} = author
+
+    attachment = case author do
+      nil -> attachment
+      _   -> Map.merge(attachment, %{
+        "author_name" => nickname,
+        "author_link" => "https://tower.im/members/#{guid}/"
+      })
+    end
+  end
+
+  defp get_project(data) do
+    %{"project" => %{
+        "guid"  => guid,
+        "name"  => name
+      },
+    } = data
+
+    {guid, name}
+  end
+
+  defp get_subject(data) do
+    %{"guid" => guid, "title" => title, "handler" => author} = data
+    {guid, title, author}
+  end
+
+  defp get_assignee(data) do
+    %{"assignee" => %{ "nickname" => nickname }} = data
+    {nickname}
   end
 
   defp subject_key(type) do
@@ -141,6 +142,31 @@ defmodule Tower2slack.Proxy do
       _           -> "#{base}#{type}/#{subjetc_guid}/"
     end
   end
+
+  defp add_assign_text(text, action, data) do
+    case action do
+      "assigned" ->
+        {nickname} = get_assignee(data)
+        "#{text} 给 *#{nickname}*"
+
+      _ -> text
+    end
+  end
+
+
+  defp add_comment_text(text, data) do
+    case data do
+      %{"comment" => %{"content" => content}} ->
+        lines   = content |> String.strip |> String.split("\r\n")
+        suffix  = if length(lines) <= 1, do: "", else: " ..."
+
+        text <> "\n> " <> List.first(lines) <> suffix
+
+      _ ->
+        text
+    end
+  end
+
 
   @doc """
   将 payload 发到 Slack。会加上默认设置。
