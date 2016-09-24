@@ -1,5 +1,7 @@
 # Tower2slack
 
+![](https://ruby-china-files.b0.upaiyun.com/photo/2016/f8cb088cc16ffc7138401127880a108e.png!large)
+
 这个项目用来提供 hook 服务，将 [Tower](https://tower.im) 的 hook 数据转发到 [Slack](https://slack.com).
 
 ## 安装
@@ -46,16 +48,3 @@
 ## 鸣谢
 
 这个项目参考了 [@lepture](https://github.com/lepture/) 写的 [python 版本](https://github.com/lepture/tower-slack).
-
-![](https://ruby-china-files.b0.upaiyun.com/photo/2016/f8cb088cc16ffc7138401127880a108e.png!large)
-
-我们团队使用 [Tower](https://tower.io) + [Slack](https://slack.com) 作为日常的协作工具。
-tower 提供了 web hook 的功能，可以将发生的事件通知给其他应用。Slack 也有 incomming bot 可以接收消息，自动发给团队成员。
-理论上可以很好工作的，但两者的数据定义不一样，需要中间做一次格式转换。
-
-因此我写了一个小服务，可以很作为一个 hook 代理，将收到的 notification 数据转换后发给 Slack.
-项目地址：https://github.com/qhwa/tower2slack
-
-## 友情提示
-
-由于国内、外网络原因，最好将服务部署到国外，这样网络方面的失败率会低一些。
