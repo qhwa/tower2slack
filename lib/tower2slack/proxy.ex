@@ -53,10 +53,9 @@ defmodule Tower2slack.Proxy do
       |> add_assign_text(action, data)
       |> add_comment_text(data)
 
-    attachment  = %{"color" => get_color(action)}
+    attachment  = %{"color" => get_color(action), "mrkdwn_in" => ["text"]}
       |> add_author_info(author)
       |> Map.put("text", text)
-      |> Map.put("mrkdwn_in", ["text"])
 
     %{attachments: [attachment]}
   end
@@ -127,6 +126,7 @@ defmodule Tower2slack.Proxy do
   end
 
   defp get_color(_action) do
+    #TODO: 根据 action 不同返回不同的颜色
     "good"
   end
 
