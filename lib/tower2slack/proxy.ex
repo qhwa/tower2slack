@@ -13,7 +13,7 @@ defmodule Tower2slack.Proxy do
   Returns Slack payload
 
   ## Exmaple:
-  
+
   iex> Tower2slack.Proxy.transform_tower(%{
   ...>  "action" => "created",
   ...>  "data" => %{
@@ -42,14 +42,21 @@ defmodule Tower2slack.Proxy do
 
   {"action":"archived","data":{"project":{"guid":"8326a5e69712479184f53cea924f8a74","name":"熟悉Tower"},"topic":{"guid":"fe5ca04772754f7182d50d4e8f8af17c","title":"欢迎来到 Tower","updated_at":"2016-09-08T12:46:54Z","handler":{"guid":"7544ba908d2a4108a0df79d65c9061d4","nickname":"五柳"}}}}
   """
-   
+
   def transform_tower(%{"action" => action, "data" => data}, event) do
     {project_guid, project_name} = get_project(data)
-    {subject_guid, subject_title, author} = get_subject(Map.get(data, subject_key(event)))
+    {subject_guid, subject_title, author} = data
+      |> Map.get(subject_key(event))
+      |> get_subject()
 
     subject_url = get_subject_url(project_guid, event, subject_guid)
 
-    text = "在项目《<#{project_url(project_guid)}|#{project_name}>》中#{caption(action)} #{caption(event)} <#{subject_url}|#{subject_title}>"
+    text = [
+      "在项目《<#{project_url(project_guid)}|#{project_name}>》中" <> caption(action),
+      caption(event),
+      "<#{subject_url}|#{subject_title}>"
+    ]
+      |> Enum.join(" ")
       |> add_assign_text(action, data)
       |> add_comment_text(data)
 
@@ -185,7 +192,7 @@ defmodule Tower2slack.Proxy do
   defp post(body, url) do
     headers = [
       {:"content-type", "application/json"}
-    ] 
+    ]
 
     opts = Application.fetch_env!(:tower2slack, :deliver_opts) ++ []
 

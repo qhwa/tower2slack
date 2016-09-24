@@ -57,5 +57,5 @@ defmodule Tower2slack.Server do
       |> get_req_header("x-tower-#{name}")
       |> List.first
   end
-  
+
 end
