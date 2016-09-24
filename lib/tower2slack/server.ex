@@ -37,14 +37,17 @@ defmodule Tower2slack.Server do
           |> Map.put(:channel, channel)
           |> deliver(slack_url)
 
-        conn |> send_resp(200, "ok")
+        send_resp(conn, 200, "ok")
+
       _ ->
-        conn |> send_resp(200, "^^")
+        send_resp(conn, 200, "^^")
     end
   end
 
   defp tower_header(conn, name) do
-    conn |> get_req_header("x-tower-#{name}") |> List.first
+    conn
+      |> get_req_header("x-tower-#{name}")
+      |> List.first
   end
   
 end
