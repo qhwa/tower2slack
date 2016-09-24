@@ -35,7 +35,7 @@
 
 ## 效果图
 
-![](https://ruby-china-files.b0.upaiyun.com/photo/2016/11dde9cb0c846d4da8199a8485374493.png!large =313x)
+![](https://ruby-china-files.b0.upaiyun.com/photo/2016/11dde9cb0c846d4da8199a8485374493.png!large)
 
 将 Slack hook 地址 `https://hook.slack.com/...` 替换成 `http://YOUR_HOST:14326/...`
 
@@ -47,7 +47,7 @@
 
 这个项目参考了 [@lepture](https://github.com/lepture/) 写的 [python 版本](https://github.com/lepture/tower-slack).
 
-![](https://ruby-china-files.b0.upaiyun.com/photo/2016/f8cb088cc16ffc7138401127880a108e.png!large =300x)
+![](https://ruby-china-files.b0.upaiyun.com/photo/2016/f8cb088cc16ffc7138401127880a108e.png!large)
 
 我们团队使用 [Tower](https://tower.io) + [Slack](https://slack.com) 作为日常的协作工具。
 tower 提供了 web hook 的功能，可以将发生的事件通知给其他应用。Slack 也有 incomming bot 可以接收消息，自动发给团队成员。
